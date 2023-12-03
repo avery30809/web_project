@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>background</title>
+        <style>
+            body{
+                background-image:url("FCIaQJm.jpg");
+                background-repeat: no-repeat;
+                background-attachment: fixed;
+                background-position: center;
+                background-size: cover;
+            }
+            table {
+                border: 3px solid #6583e6;  /*邊框顏色*/
+                background-color:rgba(87, 96, 99, 0.5);  /*表格背景顏色*/
+                /*最後一個數字是表示他的透明度 0為透明 1為完全不透明*/
+            }
+            table td, table th{
+                padding: 30px;  /*表格周圍邊框*/
+                color: black; /*字體顏色*/
+                font-size: 40px;
+                text-align: center;
+                border: 3px solid black;
+            }
+            .list{
+                border: 3px solid blue;
+                text-align: left;
+                font-size: 27px;
+                color:navy;
+                width:45%;
+                height: 45%;
+                overflow: scroll;
+                position:absolute;
+                top:60px;
+                left:50%;
+                user-select: none;/*讓使用者不能反白文字*/
+            }
+            .list .checkContent:hover {
+                text-decoration: underline;
+                cursor: pointer;
+            }
+
+            .checkLabel {
+                display: inline-block;
+                width: 20px;
+                height: 20px;
+                background: #C3DEF3;
+                border-radius: 20px;
+                margin-right: 3px;
+            }
+
+            input[type="checkbox"] {
+                display: none;
+            }
+
+            input[type="checkbox"]:checked+label {
+                background: #79A9CE;
+            }
+        </style>
+    </head>
+    <body>
+        <script>
+            //appendChild()是將一個元素放入另一個元素裡當子元素
+            function createTable(rows, cols) {
+                var table = document.createElement('table');
+                var tbody = document.createElement('tbody');
+                var headerRow = document.createElement('tr');
+                var weekdays = ['日','一', '二', '三', '四', '五','六'];
+
+                for (var day = 1; day <= cols; day++) {
+                    var th = document.createElement('th');
+                    th.textContent =weekdays[day-1];
+                    headerRow.appendChild(th);
+                }
+                tbody.appendChild(headerRow);   //將headerRow放入tbody
+                
+                for (var i = 1; i <= rows; i++) {  //列
+                    var row = document.createElement('tr');
+                    for (var j = 1; j <= cols; j++) {  //行
+                        var col = document.createElement('td');
+                        row.appendChild(col);  //將cell放入row的元素
+                    }
+                    tbody.appendChild(row); //將row放入tbody這個元素裡
+                }
+    
+                table.appendChild(tbody);   //將tbody放入table
+                return table;               //回傳這個表格
+            }
+            document.body.appendChild(createTable(10, 7));  //最後將回傳的表格放入body裡
+        </script>
+        <p class="list">
+            <label>
+                <input id="ck1" name="schedule" value="作業系統" type="checkbox"/>
+                <label class="checkLabel" for="ck1"></label>
+                <label class="checkContent" for="ck1">作業系統</label>
+            </label><br>
+            <label>
+                <input id="ck2" name="schedule" value="網頁程式設計" type="checkbox"/>
+                <label class="checkLabel" for="ck2"></label>
+                <label class="checkContent" for="ck2">網頁程式設計</label>
+            </label><br>
+            <label>
+                <input id="ck3" name="schedule" value="電腦網路" type="checkbox"/>
+                <label class="checkLabel" for="ck3"></label>
+                <label class="checkContent" for="ck3">電腦網路</label>
+            </label><br>
+        </p>
+
+    </body>
+</html>
