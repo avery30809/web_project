@@ -1,0 +1,85 @@
+/*body{
+    background-image:url("FCIaQJm.jpg");
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-position: center;
+    background-size: cover;
+}*/
+
+@import url('https://fonts.googleapis.com/earlyaccess/cwtexyen.css');
+@import url('https://fonts.googleapis.com/css2?family=Comfortaa&family=Lobster&display=swap');
+
+body{
+    font-family: 'cwTeXYen','Comfortaa', sans-serif;
+    font-size: 20px;
+}
+
+table {
+    border: 3px solid;
+    /*邊框顏色*/
+    background-color: rgba(87, 96, 99, 0.5);
+    /*表格背景顏色*/
+    /*最後一個數字是表示他的透明度 0為透明 1為完全不透明*/
+    position: absolute;
+    left: 3%;
+}
+
+table td,
+table th {
+    padding: 28px;
+    /*表格周圍邊框*/
+    color: black;
+    /*字體顏色*/
+    font-size: 40px;
+    text-align: left;
+    border: 1px solid black;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 40px;
+    text-wrap: nowrap;
+}
+
+.list {
+    border: 3px solid blue;
+    text-align: left;
+    font-size: 27px;
+    color: navy;
+    width: 45%;
+    height: 45%;
+    overflow: scroll;
+    position: absolute;
+    top: 60px;
+    right: 3%;
+    user-select: none;
+    /*讓使用者不能反白文字*/
+}
+
+.list .checkContent:hover {
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.checkLabel {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    background: #C3DEF3;
+    border-radius: 20px;
+    margin-right: 3px;
+}
+
+input[type="checkbox"] {
+    display: none;
+}
+
+input[type="checkbox"]:checked+label {
+    background: #79A9CE;
+}
+
+.pic {
+    width: 60px;
+    height: 60px;
+    position: absolute;
+    right: 50px;
+    top: 3%;
+}
