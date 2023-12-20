@@ -4,24 +4,30 @@
         <meta charset="utf-8">
         <title>background</title>
         <style>
-            body{
+            /*body{
                 background-image:url("FCIaQJm.jpg");
                 background-repeat: no-repeat;
                 background-attachment: fixed;
                 background-position: center;
                 background-size: cover;
-            }
+            }*/
             table {
-                border: 3px solid #6583e6;  /*邊框顏色*/
+                border: 3px solid;  /*邊框顏色*/
                 background-color:rgba(87, 96, 99, 0.5);  /*表格背景顏色*/
                 /*最後一個數字是表示他的透明度 0為透明 1為完全不透明*/
+                position: absolute;
+                left: 3%;
             }
             table td, table th{
-                padding: 30px;  /*表格周圍邊框*/
+                padding: 28px;  /*表格周圍邊框*/
                 color: black; /*字體顏色*/
                 font-size: 40px;
-                text-align: center;
-                border: 3px solid black;
+                text-align:left;
+                border: 1px solid black;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                max-width: 40px;
+                text-wrap: nowrap;
             }
             .list{
                 border: 3px solid blue;
@@ -33,7 +39,7 @@
                 overflow: scroll;
                 position:absolute;
                 top:60px;
-                left:50%;
+                right:3%;
                 user-select: none;/*讓使用者不能反白文字*/
             }
             .list .checkContent:hover {
@@ -56,6 +62,14 @@
 
             input[type="checkbox"]:checked+label {
                 background: #79A9CE;
+            }
+
+            .pic{
+                width : 60px;
+                height: 60px;
+                position: absolute;
+                right: 50px;
+                top: 3%;
             }
         </style>
     </head>
@@ -89,6 +103,7 @@
             }
             document.body.appendChild(createTable(10, 7));  //最後將回傳的表格放入body裡
         </script>
+        <h1>CLASS SCHEDULE</h1>
         <p class="list">
             <label>
                 <input id="ck1" name="schedule" value="作業系統" type="checkbox"/>
@@ -106,6 +121,6 @@
                 <label class="checkContent" for="ck3">電腦網路</label>
             </label><br>
         </p>
-
+        <img  class = pic src = "card-list.svg"/>
     </body>
 </html>
