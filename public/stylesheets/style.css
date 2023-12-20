@@ -26,17 +26,24 @@ table {
 
 table td,
 table th {
-    padding: 28px;
+    padding: 10px;
     /*表格周圍邊框*/
     color: black;
     /*字體顏色*/
-    font-size: 40px;
-    text-align: left;
+    font-size: 14px;
+    text-align: center;
     border: 1px solid black;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    max-width: 40px;
-    text-wrap: nowrap;
+    max-width: 115px;
+}
+table th {
+    padding-inline: 57px;
+}
+
+.courseBrief {
+    display: flex;
+    flex-wrap: nowrap;
+    flex-direction: row;
+    padding: 5px;
 }
 
 .list {
@@ -61,11 +68,19 @@ table th {
 
 .checkLabel {
     display: inline-block;
-    width: 20px;
-    height: 20px;
+    position: relative;
+    top: 8px;
+    min-width: 20px;
+    min-height: 20px;
+    max-width: 20px;
+    max-height: 20px;
     background: #C3DEF3;
     border-radius: 20px;
     margin-right: 3px;
+}
+
+.checkLabel:hover {
+    cursor: pointer;
 }
 
 input[type="checkbox"] {

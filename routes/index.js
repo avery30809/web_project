@@ -32,11 +32,19 @@ const mySchema=new mongoose.Schema({
         type: String,
         default: null
     },
+    teacher_ENG: {
+        type: String,
+        default: null
+    },
     course_name: {
         type: String,
         default: null
     },
     course_name_ENG: {
+        type: String,
+        default: null
+    },
+    class: {
         type: String,
         default: null
     },
@@ -73,8 +81,8 @@ let collectionName;
 router.get('/', async function (req, res, next) {
     res.render('index', { title: 'Express' });
 });
-
-router.get('/hello', async function (req, res) {
+// 伺服器剛開 設定初始值
+router.get('/first', async function (req, res) {
     if(collectionName === undefined) {
         collectionName = await getSemester();
         const collections = await db.db.listCollections({ name: collectionName }).toArray();
@@ -90,12 +98,29 @@ router.get('/hello', async function (req, res) {
             });
         }
     }
+    else {
+        res.send({
+            message: `Collection ${collectionName} exists.`
+        });
+    }
 });
 
 router.get('/courses', async function (req, res, next) {
     try{
         // 找出Todo資料資料表中的全部資料
-        const todo=await Todo.find();
+        const todo=await Todo.find().sort({dept_name: 1, course_name: 1, class: 1});
+        // 將回傳的資訊轉成Json格式後回傳
+        res.json(todo);
+    }catch(err){
+        // 如果資料庫出現錯誤時回報status:500 並回傳錯誤訊息
+        res.status(500).json({message:err.message})
+    }
+});
+
+router.get('/courses/:id/:class', async function (req, res, next) {
+    try{
+        // 找出Todo資料資料表中的全部資料
+        const todo=await Todo.find({id: req.params.id, class: req.params.class});
         // 將回傳的資訊轉成Json格式後回傳
         res.json(todo);
     }catch(err){
@@ -223,6 +248,9 @@ async function getCourse(dept) {
 
             obj['hours'] = parseInt(obj['hours']);
             obj['must'] = obj['must']=="T"?"服務學習":obj['must'];
+            let temp = obj['teacher'].split("(");
+            obj['teacher'] = temp[0];
+            obj['teacher_ENG'] = temp[1].replace(")", "");
 
             await driver.switchTo().parentFrame();
             await driver.switchTo().parentFrame();
