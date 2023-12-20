@@ -52,10 +52,8 @@ table th {
     font-size: 27px;
     color: navy;
     height: 400px;
+    margin-top: 10px;
     overflow: scroll;
-
-    top: 60px;
-    right: 3%;
     user-select: none;
     /*讓使用者不能反白文字*/
 }
