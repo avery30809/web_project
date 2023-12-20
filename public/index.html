@@ -10,12 +10,31 @@
         <title>background</title>
     </head>
     <body>
-        <h1>CLASS SCHEDULE</h1>
-        <table id="schedule"></table>
-        <p class="list" id="courseList">
-            loading...
-        </p>
-        <img  class = pic src = "images/card-list.svg"/>
+        <div class="jumbotron p5 bg-info text-white text-center">
+            <h1>課程編輯大師</h1>
+        </div>
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-sm-2"></div>
+                <div class="col-sm-4">
+                    <h1>CLASS SCHEDULE</h1>
+                    <table id="schedule"></table>
+                </div>
+                <div class="col-sm-1"></div>
+                <div class="col-sm-5">
+                    <input id="course_id" type="text" class="input-lg" placeholder="課號">
+                    <input id="course_name" type="text" class="input-lg" placeholder="課名">
+                    <input id="teacher" type="text" class="input-lg" placeholder="老師">
+                    <img  class = pic src = "images/card-list.svg"/>
+                    <div class="list mt2">
+                        <p id="courseList">
+                            loading...
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-/bQdsTh/da6pkI1MST/rWKFNjaCP5gBSY4sEBT38Q/9RBh9AH40zEOg7Hlq2THRZ" crossorigin="anonymous"></script>
     </body>
 </html>

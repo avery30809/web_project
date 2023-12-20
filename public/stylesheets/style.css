@@ -51,10 +51,9 @@ table th {
     text-align: left;
     font-size: 27px;
     color: navy;
-    width: 45%;
-    height: 45%;
+    height: 400px;
     overflow: scroll;
-    position: absolute;
+
     top: 60px;
     right: 3%;
     user-select: none;
@@ -94,7 +93,7 @@ input[type="checkbox"]:checked+label {
 .pic {
     width: 60px;
     height: 60px;
-    position: absolute;
+
     right: 50px;
     top: 3%;
 }
