@@ -14,8 +14,10 @@ body{
     font-size: 20px;
 }
 
-.container {
-    padding-inline: .4rem;
+@media (min-width: 1500px){
+    .container {
+        max-width: 95%;
+    }
 }
 
 .timeTo {
@@ -25,7 +27,64 @@ body{
 }
 
 .icon {
-    margin-left: auto;
+    text-align: right;
+}
+
+.dropdown {
+    display: inline-block;
+}
+.dropdown::after {
+    content: "";
+    background: url("../images/dropdownIcon48.png");
+    height: 30px;
+    width: 50px;
+    transition: transform 0.3s;
+    display: inline-block;
+    position: absolute;
+    right: -12px;
+    bottom: 20px;
+    pointer-events: none;
+}
+.dropdown.active::after {
+    transform: rotate(180deg) translateY(-50%);
+}
+
+[data-index="option"] {
+    border: none;
+    border-bottom: 1px solid black;
+    font-weight: 600;
+    width: 140px;
+    margin-bottom: 10px;
+    text-align: center;
+}
+[data-index="option"]:focus {
+    outline: none;
+}
+[data-index="option"]:hover {
+    cursor: pointer;
+}
+
+.dropdown.active .dropdown-menu {
+    display: block;
+}
+.dropdown-menu {
+    min-width: 140px;
+    border: none;
+    border-inline: 3px solid lightgray;
+    text-align: center;
+    padding: 0px;
+    right: 0px;
+    top: 33px;
+}
+.dropdown-menu li {
+    border-bottom: 3px solid lightgray;
+    font-size: 24px;
+    font-weight: 600;
+}
+.dropdown-menu li:hover {
+    background-color: rgb(90, 163, 223);
+    cursor: pointer;
+    color: white;
 }
 
 table {
@@ -35,7 +94,7 @@ table {
     /*最後一個數字是表示他的透明度 0為透明 1為完全不透明*/
     width: 100%;
     table-layout: fixed;
-    word-wrap:break-word;
+    word-wrap: break-word;
     margin-bottom: 10px;
 
 }

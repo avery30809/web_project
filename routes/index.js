@@ -108,7 +108,7 @@ router.get('/first', async function (req, res) {
 router.get('/courses', async function (req, res, next) {
     try{
         // 找出Todo資料資料表中的全部資料
-        const todo=await Todo.find().sort({dept_name: 1, course_name: 1, class: 1});
+        const todo=await Todo.find().sort({dept_name: -1, seg: 1, class: 1});
         // 將回傳的資訊轉成Json格式後回傳
         res.json(todo);
     }catch(err){

@@ -1,16 +1,43 @@
 $(document).ready(()=>{
     createTable();  //最後將回傳的表格放入body裡
-    $.get("first", function(res) {
-        document.getElementById("courseList").innerHTML= res.message;
-        getCourses();
+    $.ajax({
+        url: "first",
+        type: "GET",
+        success: (res)=>{
+            document.getElementById("courseList").innerHTML= res.message;
+            getCourses();
+        }
     });
-})
+    document.getElementById("selectType").addEventListener("click", (event)=>{
+        event.stopPropagation();
+        event.target.parentElement.classList.toggle("active");
+    }, false);
+    document.querySelector(".dropdown-menu").childNodes.forEach((element)=>{
+        element.addEventListener("click", ()=>{
+            document.getElementById("selectType").value = element.innerText;
+            document.getElementById("searchBox").placeholder = element.innerText;
+            document.getElementById("searchBox").value = "";
+            updateList();
+        });
+    });
+    document.getElementById("searchBox").addEventListener("input", updateList, false);
+});
+
+let coursesList = [];
+
+document.addEventListener("click", ()=>{
+    document.querySelectorAll(".active").forEach((element)=>{
+        element.classList.remove("active");
+    });
+}, false);
+
 function getCourses() {
     $.get("courses", function(courses) {
         document.getElementById("courseList").innerHTML = "";
-        let i=0;
+        let i=0, content = "";
+        coursesList = courses;
         courses.forEach((course)=>{
-            document.getElementById("courseList").innerHTML += `
+            content += `
             <div class="courseBrief">
             <input id="ck${i}" name="schedule" value="${course.id} ${course.class}" type="checkbox"/>
             <label class="checkLabel" for="ck${i}"></label>
@@ -19,6 +46,7 @@ function getCourses() {
             `;
             i++;
         });
+        document.getElementById("courseList").innerHTML = content;
         document.querySelectorAll("input[type='checkbox']").forEach((element)=>{
             element.addEventListener("change", updateTable, false);
         });
@@ -96,4 +124,127 @@ function updateTable(){
             });
         }
     });
+}
+
+function updateList() {
+    let query = document.getElementById("searchBox").value, content = "";
+    document.getElementById("courseList").innerHTML = "";
+    if(query == "") {
+        let i=0;
+        coursesList.forEach((course)=>{
+            content += `
+            <div class="courseBrief">
+            <input id="ck${i}" name="schedule" value="${course.id} ${course.class}" type="checkbox"/>
+            <label class="checkLabel" for="ck${i}"></label>
+            <label class="checkContent" for="ck${i}">${course.id}\t${course.course_name}\t${course.class}\t${course.teacher}\t${course.seg}</label>
+            </div>
+            `;
+            i++;
+        });
+        document.getElementById("courseList").innerHTML = content;
+        document.querySelectorAll("input[type='checkbox']").forEach((element)=>{
+            element.addEventListener("change", updateTable, false);
+        });
+        return;
+    }
+    let selectType = document.getElementById("selectType").value;
+    let i=0;
+    switch(selectType) {
+        case "課號":
+            for(let course of coursesList) {
+                if(!course.id.includes(query)) continue;
+                content += `
+                <div class="courseBrief">
+                <input id="ck${i}" name="schedule" value="${course.id} ${course.class}" type="checkbox"/>
+                <label class="checkLabel" for="ck${i}"></label>
+                <label class="checkContent" for="ck${i}">${course.id}\t${course.course_name}\t${course.class}\t${course.teacher}\t${course.seg}</label>
+                </div>
+                `;
+                i++;
+            }
+            document.getElementById("courseList").innerHTML = content;
+            document.querySelectorAll("input[type='checkbox']").forEach((element)=>{
+                element.addEventListener("change", updateTable, false);
+            });
+            break;
+        case "課名":
+            for(let course of coursesList) {
+                if(!course.course_name.includes(query)) continue;
+                content += `
+                <div class="courseBrief">
+                <input id="ck${i}" name="schedule" value="${course.id} ${course.class}" type="checkbox"/>
+                <label class="checkLabel" for="ck${i}"></label>
+                <label class="checkContent" for="ck${i}">${course.id}\t${course.course_name}\t${course.class}\t${course.teacher}\t${course.seg}</label>
+                </div>
+                `;
+                i++;
+            }
+            document.getElementById("courseList").innerHTML = content;
+            document.querySelectorAll("input[type='checkbox']").forEach((element)=>{
+                element.addEventListener("change", updateTable, false);
+            });
+            break;
+        case "老師":
+            for(let course of coursesList) {
+                if(!course.teacher.includes(query)) continue;
+                content += `
+                <div class="courseBrief">
+                <input id="ck${i}" name="schedule" value="${course.id} ${course.class}" type="checkbox"/>
+                <label class="checkLabel" for="ck${i}"></label>
+                <label class="checkContent" for="ck${i}">${course.id}\t${course.course_name}\t${course.class}\t${course.teacher}\t${course.seg}</label>
+                </div>
+                `;
+                i++;
+            }
+            document.getElementById("courseList").innerHTML = content;
+            document.querySelectorAll("input[type='checkbox']").forEach((element)=>{
+                element.addEventListener("change", updateTable, false);
+            });
+            break;
+        case "系所":
+            query = query==="通"||query==="通識"?"共同教育中心博雅教育組" : query;
+            query = query==="資"||query==="資工"?"資訊工程學系" : query;
+            for(let course of coursesList) {
+                if(!course.dept_name.includes(query)) continue;
+                content += `
+                <div class="courseBrief">
+                <input id="ck${i}" name="schedule" value="${course.id} ${course.class}" type="checkbox"/>
+                <label class="checkLabel" for="ck${i}"></label>
+                <label class="checkContent" for="ck${i}">${course.id}\t${course.course_name}\t${course.class}\t${course.teacher}\t${course.seg}</label>
+                </div>
+                `;
+                i++;
+            }
+            document.getElementById("courseList").innerHTML = content;
+            document.querySelectorAll("input[type='checkbox']").forEach((element)=>{
+                element.addEventListener("change", updateTable, false);
+            });
+            break;
+        case "時間":
+            for(let course of coursesList) {
+                let flag = false;
+                for(let time of course.seg) {
+                    if(time.startsWith(query)) {
+                        flag = true;
+                        break;
+                    }
+                }
+                if(!flag) continue;
+                content += `
+                <div class="courseBrief">
+                <input id="ck${i}" name="schedule" value="${course.id} ${course.class}" type="checkbox"/>
+                <label class="checkLabel" for="ck${i}"></label>
+                <label class="checkContent" for="ck${i}">${course.id}\t${course.course_name}\t${course.class}\t${course.teacher}\t${course.seg}</label>
+                </div>
+                `;
+                i++;
+            }
+            document.getElementById("courseList").innerHTML = content;
+            document.querySelectorAll("input[type='checkbox']").forEach((element)=>{
+                element.addEventListener("change", updateTable, false);
+            });
+            break;
+        default:
+            break;
+    };
 }
