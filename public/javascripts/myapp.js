@@ -53,7 +53,7 @@ function createTable(rows = 14, cols = 8) {
     let headerRow = document.createElement('tr');
     let weekdays = [' ','日','一', '二', '三', '四', '五','六'];
     let timeClass = ["第一節", "第二節", "第三節", "第四節", "第五節", "第六節", "第七節", "第八節", "第九節", "第十節", "第十一節", "第十二節", "第十三節", "第十四節"]
-    let timeSlot = ["08:20~09:10", "09:20~10:10", "10:20~11:10", "11:15~12:05", "12:10~13:00", "13:10~14:00", "14:10~15:00", "15:10~16:00", "16:10~16:55", "17:30~18:20", "18:30~19:20", "19:25~20:15", "20:20~21:10", "21:15~22:05"];
+    let timeSlot = ["08:20<br><span class='timeTo'>~</span><br>09:10", "09:20<br><span class='timeTo'>~</span><br>10:10", "10:20<br><span class='timeTo'>~</span><br>11:10", "11:15<br><span class='timeTo'>~</span><br>12:05", "12:10<br><span class='timeTo'>~</span><br>13:00", "13:10<br><span class='timeTo'>~</span><br>14:00", "14:10<br><span class='timeTo'>~</span><br>15:00", "15:10<br><span class='timeTo'>~</span><br>16:00", "16:10<br><span class='timeTo'>~</span><br>16:55", "17:30<br><span class='timeTo'>~</span><br>18:20", "18:30<br><span class='timeTo'>~</span><br>19:20", "19:25<br><span class='timeTo'>~</span><br>20:15", "20:20<br><span class='timeTo'>~</span><br>21:10", "21:15<br><span class='timeTo'>~</span><br>22:05"];
 
     for (let day = 1; day <= cols; day++) {
         let th = document.createElement('th');
@@ -78,9 +78,9 @@ function createTable(rows = 14, cols = 8) {
 
 function updateTable(){
     const allCheckBox = document.querySelectorAll("input[type='checkbox']");
+    createTable();
     // 遍歷所有的 checkbox 元素
     allCheckBox.forEach(function(nowCheckBox) {
-        createTable();
         // 檢查 checkbox 的狀態
         if (nowCheckBox.checked) {
             let params = nowCheckBox.value.split(" ");

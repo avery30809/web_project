@@ -14,14 +14,30 @@ body{
     font-size: 20px;
 }
 
+.container {
+    padding-inline: .4rem;
+}
+
+.timeTo {
+    transform: rotate(90deg);
+    display: inline-block;
+    font-size: 20px;
+}
+
+.icon {
+    margin-left: auto;
+}
+
 table {
-    border: 3px solid;
-    /*邊框顏色*/
+    border: none;
     background-color: rgba(87, 96, 99, 0.5);
     /*表格背景顏色*/
     /*最後一個數字是表示他的透明度 0為透明 1為完全不透明*/
-    position: absolute;
-    left: 3%;
+    width: 100%;
+    table-layout: fixed;
+    word-wrap:break-word;
+    margin-bottom: 10px;
+
 }
 
 table td,
@@ -33,10 +49,6 @@ table th {
     font-size: 14px;
     text-align: center;
     border: 1px solid black;
-    max-width: 115px;
-}
-table th {
-    padding-inline: 57px;
 }
 
 .courseBrief {
@@ -49,7 +61,7 @@ table th {
 .list {
     border: 3px solid blue;
     text-align: left;
-    font-size: 27px;
+    font-size: 19px;
     color: navy;
     height: 400px;
     margin-top: 10px;
