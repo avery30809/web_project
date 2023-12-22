@@ -1,4 +1,5 @@
 require('dotenv').config();
+var path = require('path');
 var express = require('express');
 var router = express.Router();
 
@@ -14,10 +15,33 @@ db.once('open', async function () {
 });
 
 const { Builder, Browser, By, until } = require('selenium-webdriver');
-const chrome = require('selenium-webdriver/edge');
+const chrome = require('selenium-webdriver/chrome');
 const chromeOptions = new chrome.Options();
 chromeOptions.headless(); // 不開啟瀏覽器
 chromeOptions.addArguments('--blink-settings=imagesEnabled=false'); // 禁用圖片加載
+
+
+try {
+    chrome.getDefaultService()//確認是否有預設
+} catch {
+    console.warn('找不到預設driver!');
+    
+    //'../chromedriver.exe'記得調整成自己的路徑
+    const file_path = './chromedriver.exe'
+    //請確認印出來日誌中的位置是否與你路徑相同
+    console.log(path.join(__dirname, file_path));
+    
+    //確認路徑下chromedriver.exe是否存在            
+    if (fs.existsSync(path.join(__dirname, file_path))) {
+        //設定driver路徑
+        const service = new chrome.ServiceBuilder(path.join(__dirname, file_path)).build();
+        chrome.setDefaultService(service);
+        console.log('設定driver路徑');
+    } else {
+        console.error('無法設定driver路徑');
+        return false
+    }
+}
 
 // 課程collection的格式設定
 const mySchema=new mongoose.Schema({
