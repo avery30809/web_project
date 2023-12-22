@@ -14,7 +14,7 @@ db.once('open', async function () {
 });
 
 const { Builder, Browser, By, until } = require('selenium-webdriver');
-const chrome = require('selenium-webdriver/chrome');
+const chrome = require('selenium-webdriver/edge');
 const chromeOptions = new chrome.Options();
 chromeOptions.headless(); // 不開啟瀏覽器
 chromeOptions.addArguments('--blink-settings=imagesEnabled=false'); // 禁用圖片加載
