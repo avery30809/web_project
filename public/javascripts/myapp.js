@@ -1,6 +1,7 @@
 let closeImg = new Image();
 closeImg.src = "../images/close.png";
 $(document).ready(()=>{
+    [...document.querySelectorAll('[data-bs-toggle="popover"]')].forEach(el => new bootstrap.Popover(el))
     const close = document.getElementById("closeIcon");
     close.src = closeImg.src;
     close.style.width = "50px";
@@ -21,7 +22,7 @@ $(document).ready(()=>{
     document.querySelector(".dropdown-menu").childNodes.forEach((element)=>{
         element.addEventListener("click", ()=>{
             document.getElementById("selectType").value = element.innerText;
-            document.getElementById("searchBox").placeholder = element.innerText;
+            document.getElementById("searchBox").placeholder = "搜尋" + element.innerText;
             document.getElementById("searchBox").value = "";
             updateList();
         });
@@ -37,6 +38,9 @@ $(document).ready(()=>{
     }, false);
     document.getElementById("popup").addEventListener("click", (e)=>{e.stopPropagation()}, false);
     document.getElementById("closeIcon").addEventListener("click", clearScreen, false);
+    let icon = document.querySelectorAll(".pic");
+    icon[0].addEventListener("click", printSchedule, false);
+    icon[1].addEventListener("click", updateDB, false);
 });
 
 let coursesList = [];
@@ -105,6 +109,7 @@ function createTable(rows = 14, cols = 8) {
     for (let i = 1; i <= rows; i++) {  //列
         let row = document.createElement('tr');
         let firstCol = document.createElement('td');
+        firstCol.style.fontSize = "80%";
         firstCol.innerHTML = `${timeClass[i-1]}<br>${timeSlot[i-1]}`;
         row.appendChild(firstCol);
         for (let j = 2; j <= cols; j++) {  //行
@@ -321,5 +326,95 @@ function popupDetail(event) {
             cls = event.target.classList[1];
     const course = coursesList.find(element => element.course_name === name && element.class === cls);
     document.getElementById("popupName").innerHTML = name;
-    const target = document.querySelector(".popup .content");
+    document.querySelector(".popID").innerHTML = course.id;
+    document.querySelector(".popTeacher").innerHTML = course.teacher
+    document.querySelector(".popTime").innerHTML = course.seg;
+    document.querySelector(".popRoom").innerHTML = course.place;
+    document.querySelector(".popEva").innerHTML = course.evaluation;
+}
+
+function printSchedule() {
+    // 取得表格元素
+    let table = document.getElementById("schedule");
+    
+    const width = table.offsetWidth;
+    const height = table.offsetHeight;
+
+    // 將表格開在另外一個視窗
+    let printWindow = window.open('', '', `width=${width}, height=${height}`);
+
+    printWindow.document.write('<html><head><title>Schedule</title>');
+    printWindow.document.write('</head><body></body></html>');
+    printWindow.document.close();
+    
+    printWindow.document.body.innerHTML = `
+        <style>
+            @import url('https://fonts.googleapis.com/earlyaccess/cwtexyen.css');
+            @import url('https://fonts.googleapis.com/css2?family=Comfortaa&family=Lobster&display=swap');
+            body {
+                font-family: 'cwTeXYen','Comfortaa', sans-serif;
+            }
+            table {
+                border: none;
+                background-color: rgba(87, 96, 99, 0.5);
+                /*表格背景顏色*/
+                /*最後一個數字是表示他的透明度 0為透明 1為完全不透明*/
+                width: 100%;
+                table-layout: fixed;
+                word-wrap: break-word;
+                margin-bottom: 10px;
+                border-collapse: collapse;
+            }
+            
+            table td,
+            table th {
+                padding: 10px;
+                /*表格周圍邊框*/
+                color: black;
+                /*字體顏色*/
+                font-size: 14px;
+                text-align: center;
+                border: 1px solid black;
+                color: white;
+            }
+            .timeTo {
+                transform: rotate(90deg);
+                display: inline-block;
+                font-size: 20px;
+            }
+        </style>
+        <table>
+            ${table.innerHTML}
+        </table>
+    `;
+    
+    printWindow.focus();
+    printWindow.print();
+    printWindow.close();
+}
+let mutexLock = false;
+function updateDB(e) {
+    e.target.style.transform = 'rotate(360deg)';
+    setTimeout(()=>{
+        e.target.style.transition = "none";
+        e.target.style.transform = '';
+    }, 500)
+    e.target.style.transition = "transform 0.5s ease";
+    if(mutexLock) {
+        window.alert("尚未更新完");
+        return;
+    }
+    mutexLock = true;
+    createTable();
+    document.getElementById("courseList").innerHTML = "loading...";
+
+    $.ajax({
+        url: "",
+        type: "POST",
+        success: (res)=>{
+            document.getElementById("courseList").innerHTML= res.message;
+            getCourses();
+            mutexLock = false;
+        }
+    });
 }

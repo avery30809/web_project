@@ -6,6 +6,7 @@
         <link rel=stylesheet type="text/css"href="stylesheets/style.css">
 
         <script type="text/javascript" src="https://code.jquery.com/jquery-3.6.1.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-/bQdsTh/da6pkI1MST/rWKFNjaCP5gBSY4sEBT38Q/9RBh9AH40zEOg7Hlq2THRZ" crossorigin="anonymous"></script>
         <script type="text/javascript" src="javascripts/myapp.js"></script>
         <title>background</title>
     </head>
@@ -16,14 +17,14 @@
         <div class="container adjust">
             <div class="row">
                 <div class="col-md-6 text-center">
-                    <h1><strong>CLASS SCHEDULE</strong></h1>
+                    <h1 class="scheduleTitle">CLASS SCHEDULE</h1>
                     <table id="schedule"></table>
                 </div>
                 <div class="col-md-1"></div>
                 <div class="col-md-5">
                     <div class="icon">
-                        <img  class = pic src = "images/printer.svg"/>
-                        <img  class = pic src = "images/printer-fill.svg"/>
+                        <img  class = "pic" src = "images/printer.svg" title="提示" data-bs-toggle="popover" data-bs-trigger="hover" data-bs-content="點擊列印此課表"/>
+                        <img  class = "pic" src = "images/arrow-clockwise.svg" title="提示" data-bs-toggle="popover" data-bs-trigger="hover" data-bs-content="點擊更新當前資料庫"/>
                     </div>
                     <div class="dropdown">
                         查詢條件:
@@ -36,7 +37,7 @@
                             <li>時間</li>
                         </ul>
                     </div>
-                    <input id="searchBox" type="text" class="input-lg" placeholder="課號">
+                    <input id="searchBox" type="text" class="input-lg" placeholder="搜尋課號">
                     <button class="btn-default">依時間</button>
                     <div class="list">
                         <p id="courseList">
@@ -58,27 +59,26 @@
                     </div>
                     <div class="row">
                         <div class="col">課號</div>
-                        <div class="col"></div>
+                        <div class="col popID"></div>
                     </div>
                     <div class="row">
                         <div class="col">老師</div>
-                        <div class="col"></div>
+                        <div class="col popTeacher"></div>
                     </div>
                     <div class="row">
                         <div class="col">時間</div>
-                        <div class="col"></div>
+                        <div class="col popTime"></div>
                     </div>
                     <div class="row">
                         <div class="col">教室</div>
-                        <div class="col"></div>
+                        <div class="col popRoom"></div>
                     </div>
                     <div class="row">
                         <div class="col">評分</div>
-                        <div class="col"></div>
+                        <div class="col popEva"></div>
                     </div>
                 </div>
             </div>
         </div>
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-/bQdsTh/da6pkI1MST/rWKFNjaCP5gBSY4sEBT38Q/9RBh9AH40zEOg7Hlq2THRZ" crossorigin="anonymous"></script>
     </body>
 </html>
