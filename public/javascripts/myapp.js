@@ -1,4 +1,10 @@
+let closeImg = new Image();
+closeImg.src = "../images/close.png";
 $(document).ready(()=>{
+    const close = document.getElementById("closeIcon");
+    close.src = closeImg.src;
+    close.style.width = "50px";
+    close.style.height = "50px";
     createTable();  //最後將回傳的表格放入body裡
     $.ajax({
         url: "first",
@@ -21,15 +27,28 @@ $(document).ready(()=>{
         });
     });
     document.getElementById("searchBox").addEventListener("input", updateList, false);
+    const sortBtn = document.querySelector(".btn-default");
+    sortBtn.addEventListener("click", ()=>{
+        [coursesList, preList] = [preList, coursesList];
+        sortBtn.classList.toggle("btn-default");
+        sortBtn.classList.toggle("btn-success");
+        sortBtn.innerText = sortBtn.innerText==="依時間"?"依年級":"依時間";
+        updateList();
+    }, false);
+    document.getElementById("popup").addEventListener("click", (e)=>{e.stopPropagation()}, false);
+    document.getElementById("closeIcon").addEventListener("click", clearScreen, false);
 });
 
 let coursesList = [];
+let preList = [];   // 用來交換排序順序
 
-document.addEventListener("click", ()=>{
+document.addEventListener("click", clearScreen, false);
+
+function clearScreen() {
     document.querySelectorAll(".active").forEach((element)=>{
         element.classList.remove("active");
     });
-}, false);
+}
 
 function getCourses() {
     $.get("courses", function(courses) {
@@ -37,6 +56,7 @@ function getCourses() {
         let i=0, content = "";
         coursesList = courses;
         courses.forEach((course)=>{
+            coursesList[i].checked = false;
             content += `
             <div class="courseBrief">
             <input id="ck${i}" name="schedule" value="${course.id} ${course.class}" type="checkbox"/>
@@ -46,9 +66,17 @@ function getCourses() {
             `;
             i++;
         });
+        preList = [...coursesList]; // 淺copy object的內容會互相引用 但排序不會影響
+        preList.sort((a, b)=>{
+            return a.class.localeCompare(b.class);
+        });
         document.getElementById("courseList").innerHTML = content;
         document.querySelectorAll("input[type='checkbox']").forEach((element)=>{
-            element.addEventListener("change", updateTable, false);
+            element.addEventListener("change", ()=>{
+                let target1 = coursesList.find(item => `${item.id} ${item.class}` === element.value);
+                target1.checked = !target1.checked;
+                updateTable();
+            }, false);
         });
     });
 }
@@ -58,23 +86,7 @@ function postTest() {
         document.getElementById("display").innerHTML= res.status;
     }); //假裝有要發布的資料
 }
-function putTest() {
-    $.ajax({
-        method: "PUT",
-        url: "hello",
-        data: { name: "Curry"} //假裝有更新的資料
-    }).done(function(res) {
-        document.getElementById("display").innerHTML= res.message;
-    });
-}
-function deleteTest() {
-    $.ajax({
-        method: "DELETE",
-        url: "hello"
-    }).done(function(res) {
-        document.getElementById("display").innerHTML= res.status;
-    });
-}
+
 function createTable(rows = 14, cols = 8) {
     let table = document.getElementById('schedule');
     table.innerHTML = "";
@@ -117,8 +129,12 @@ function updateTable(){
                 let time = course.seg;
                 for(let i = 0 ; i < time.length ; i++){
                     let nowChooseTime = document.getElementById(time[i]);
-                    let classString = course.id +"<br>"+course.course_name+"<br>"+course.teacher+"<br>";
-                    nowChooseTime.innerHTML += classString;
+                    let courseString = course.id +"<br>"+course.course_name+"<br>"+course.teacher+"<br>";
+                    let element = document.createElement("p");
+                    element.className = `course ${course.class}`;
+                    element.innerHTML = courseString;
+                    element.addEventListener("click", popupDetail, false);
+                    nowChooseTime.appendChild(element);
                 }
                 return false;
             });
@@ -129,9 +145,11 @@ function updateTable(){
 function updateList() {
     let query = document.getElementById("searchBox").value, content = "";
     document.getElementById("courseList").innerHTML = "";
+    let checkedList = [];
     if(query == "") {
         let i=0;
         coursesList.forEach((course)=>{
+            if(course.checked) checkedList.push(i);
             content += `
             <div class="courseBrief">
             <input id="ck${i}" name="schedule" value="${course.id} ${course.class}" type="checkbox"/>
@@ -142,8 +160,15 @@ function updateList() {
             i++;
         });
         document.getElementById("courseList").innerHTML = content;
+        checkedList.forEach((i)=>{
+            document.getElementById(`ck${i}`).checked = true;
+        });
         document.querySelectorAll("input[type='checkbox']").forEach((element)=>{
-            element.addEventListener("change", updateTable, false);
+            element.addEventListener("change", ()=>{
+                let target1 = coursesList.find(item => `${item.id} ${item.class}` === element.value);
+                target1.checked = !target1.checked;
+                updateTable();
+            }, false);
         });
         return;
     }
@@ -153,6 +178,7 @@ function updateList() {
         case "課號":
             for(let course of coursesList) {
                 if(!course.id.includes(query)) continue;
+                if(course.checked) checkedList.push(i);
                 content += `
                 <div class="courseBrief">
                 <input id="ck${i}" name="schedule" value="${course.id} ${course.class}" type="checkbox"/>
@@ -163,13 +189,21 @@ function updateList() {
                 i++;
             }
             document.getElementById("courseList").innerHTML = content;
+            checkedList.forEach((i)=>{
+                document.getElementById(`ck${i}`).checked = true;
+            });
             document.querySelectorAll("input[type='checkbox']").forEach((element)=>{
-                element.addEventListener("change", updateTable, false);
+                element.addEventListener("change", ()=>{
+                    let target1 = coursesList.find(item => `${item.id} ${item.class}` === element.value);
+                    target1.checked = !target1.checked;
+                    updateTable();
+                }, false);
             });
             break;
         case "課名":
             for(let course of coursesList) {
                 if(!course.course_name.includes(query)) continue;
+                if(course.checked) checkedList.push(i);
                 content += `
                 <div class="courseBrief">
                 <input id="ck${i}" name="schedule" value="${course.id} ${course.class}" type="checkbox"/>
@@ -180,13 +214,21 @@ function updateList() {
                 i++;
             }
             document.getElementById("courseList").innerHTML = content;
+            checkedList.forEach((i)=>{
+                document.getElementById(`ck${i}`).checked = true;
+            });
             document.querySelectorAll("input[type='checkbox']").forEach((element)=>{
-                element.addEventListener("change", updateTable, false);
+                element.addEventListener("change", ()=>{
+                    let target1 = coursesList.find(item => `${item.id} ${item.class}` === element.value);
+                    target1.checked = !target1.checked;
+                    updateTable();
+                }, false);
             });
             break;
         case "老師":
             for(let course of coursesList) {
                 if(!course.teacher.includes(query)) continue;
+                if(course.checked) checkedList.push(i);
                 content += `
                 <div class="courseBrief">
                 <input id="ck${i}" name="schedule" value="${course.id} ${course.class}" type="checkbox"/>
@@ -197,8 +239,15 @@ function updateList() {
                 i++;
             }
             document.getElementById("courseList").innerHTML = content;
+            checkedList.forEach((i)=>{
+                document.getElementById(`ck${i}`).checked = true;
+            });
             document.querySelectorAll("input[type='checkbox']").forEach((element)=>{
-                element.addEventListener("change", updateTable, false);
+                element.addEventListener("change", ()=>{
+                    let target1 = coursesList.find(item => `${item.id} ${item.class}` === element.value);
+                    target1.checked = !target1.checked;
+                    updateTable();
+                }, false);
             });
             break;
         case "系所":
@@ -206,6 +255,7 @@ function updateList() {
             query = query==="資"||query==="資工"?"資訊工程學系" : query;
             for(let course of coursesList) {
                 if(!course.dept_name.includes(query)) continue;
+                if(course.checked) checkedList.push(i);
                 content += `
                 <div class="courseBrief">
                 <input id="ck${i}" name="schedule" value="${course.id} ${course.class}" type="checkbox"/>
@@ -216,8 +266,15 @@ function updateList() {
                 i++;
             }
             document.getElementById("courseList").innerHTML = content;
+            checkedList.forEach((i)=>{
+                document.getElementById(`ck${i}`).checked = true;
+            });
             document.querySelectorAll("input[type='checkbox']").forEach((element)=>{
-                element.addEventListener("change", updateTable, false);
+                element.addEventListener("change", ()=>{
+                    let target1 = coursesList.find(item => `${item.id} ${item.class}` === element.value);
+                    target1.checked = !target1.checked;
+                    updateTable();
+                }, false);
             });
             break;
         case "時間":
@@ -230,6 +287,7 @@ function updateList() {
                     }
                 }
                 if(!flag) continue;
+                if(course.checked) checkedList.push(i);
                 content += `
                 <div class="courseBrief">
                 <input id="ck${i}" name="schedule" value="${course.id} ${course.class}" type="checkbox"/>
@@ -240,11 +298,28 @@ function updateList() {
                 i++;
             }
             document.getElementById("courseList").innerHTML = content;
+            checkedList.forEach((i)=>{
+                document.getElementById(`ck${i}`).checked = true;
+            });
             document.querySelectorAll("input[type='checkbox']").forEach((element)=>{
-                element.addEventListener("change", updateTable, false);
+                element.addEventListener("change", ()=>{
+                    let target1 = coursesList.find(item => `${item.id} ${item.class}` === element.value);
+                    target1.checked = !target1.checked;
+                    updateTable();
+                }, false);
             });
             break;
         default:
             break;
     };
+}
+
+function popupDetail(event) {
+    event.stopPropagation();
+    document.querySelector(".popup-container").classList.add("active");
+    const name = event.target.innerHTML.split("<br>")[1],
+            cls = event.target.classList[1];
+    const course = coursesList.find(element => element.course_name === name && element.class === cls);
+    document.getElementById("popupName").innerHTML = name;
+    const target = document.querySelector(".popup .content");
 }

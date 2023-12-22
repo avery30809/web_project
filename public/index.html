@@ -22,8 +22,8 @@
                 <div class="col-md-1"></div>
                 <div class="col-md-5">
                     <div class="icon">
-                        <img  class = pic src = "images/card-list.svg"/>
-                        <img  class = pic src = "images/card-list.svg"/>
+                        <img  class = pic src = "images/printer.svg"/>
+                        <img  class = pic src = "images/printer-fill.svg"/>
                     </div>
                     <div class="dropdown">
                         查詢條件:
@@ -37,6 +37,7 @@
                         </ul>
                     </div>
                     <input id="searchBox" type="text" class="input-lg" placeholder="課號">
+                    <button class="btn-default">依時間</button>
                     <div class="list">
                         <p id="courseList">
                             loading...
@@ -45,6 +46,38 @@
                 </div>
             </div>
             
+        </div>
+        <div  class="popup-container">
+            <div id="popup" class="popup">
+                <button type="button" id="popupCloseBtn" class="close">
+                    <img id="closeIcon" alt="Close">
+                </button>
+                <div class="container-fluid content">
+                    <div class="row title">
+                        <h1 id="popupName"></h1>
+                    </div>
+                    <div class="row">
+                        <div class="col">課號</div>
+                        <div class="col"></div>
+                    </div>
+                    <div class="row">
+                        <div class="col">老師</div>
+                        <div class="col"></div>
+                    </div>
+                    <div class="row">
+                        <div class="col">時間</div>
+                        <div class="col"></div>
+                    </div>
+                    <div class="row">
+                        <div class="col">教室</div>
+                        <div class="col"></div>
+                    </div>
+                    <div class="row">
+                        <div class="col">評分</div>
+                        <div class="col"></div>
+                    </div>
+                </div>
+            </div>
         </div>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-/bQdsTh/da6pkI1MST/rWKFNjaCP5gBSY4sEBT38Q/9RBh9AH40zEOg7Hlq2THRZ" crossorigin="anonymous"></script>
     </body>
