@@ -1,9 +1,10 @@
+require('dotenv').config();
 var express = require('express');
 var router = express.Router();
 
 var mongoose = require('mongoose');
 // 連接到MongoDB 資料庫
-mongoose.connect('mongodb+srv://01057122:webproject@webproject.hqd0nda.mongodb.net/ntouCourse');
+mongoose.connect(`mongodb+srv://01057122:${process.env.pwd}@webproject.hqd0nda.mongodb.net/ntouCourse`);
 const db = mongoose.connection;
 // 與資料庫連線發生錯誤時
 db.on('error', console.error.bind(console, 'Connection fails!'));
