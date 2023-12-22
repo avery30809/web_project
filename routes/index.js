@@ -15,8 +15,8 @@ db.once('open', async function () {
     console.log('Connected to database...');
 });
 
-const { Builder, Browser, By, until } = require('selenium-webdriver');
-const chrome = require('selenium-webdriver/chrome');
+const { Builder, Browser, By, until } = require('selenium-webdriver@4.3.0');
+const chrome = require('selenium-webdriver@4.3.0/chrome');
 const chromeOptions = new chrome.Options();
 chromeOptions.headless(); // 不開啟瀏覽器
 chromeOptions.addArguments('--blink-settings=imagesEnabled=false'); // 禁用圖片加載
