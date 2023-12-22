@@ -28,7 +28,7 @@ try {
     console.warn('找不到預設driver!');
     
     //'../chromedriver.exe'記得調整成自己的路徑
-    const file_path = './chromedriver'
+    const file_path = './chromedriver.exe'
     //請確認印出來日誌中的位置是否與你路徑相同
     console.log(path.join(__dirname, file_path));
     
