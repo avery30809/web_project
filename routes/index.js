@@ -1,5 +1,6 @@
 require('dotenv').config();
 var path = require('path');
+const fs = require("fs");//讀取檔案用
 var express = require('express');
 var router = express.Router();
 
