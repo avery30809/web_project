@@ -12,13 +12,10 @@
 body{
     font-family: 'cwTeXYen','Comfortaa', sans-serif;
     font-size: 20px;
-    /*
     background-image: url(../images/background.png);
-    background-position: bottom right;
     background-repeat: no-repeat;
     background-attachment: fixed;
     background-size: 100%;
-    */
 }
 
 .btn-success:focus {
@@ -207,21 +204,16 @@ input[type="checkbox"]:checked+label {
 .popup {
     position: relative;
     display: block;
-    background-color: #cee1e4;
     width: 45%;
     height: auto;
     padding: 20px;
     text-align: center;
     border: 2px solid #000;
     border-radius: 6px;
-}
-.popup .row.title {
-    background-image: url(../images/titleBackground.png);
-    background-position: bottom right;
+    background: url(../images/jumppage.png) ;
+    background-size: 100% 100%;
     background-repeat: no-repeat;
-    background-attachment: fixed;
-    background-size: 100%;
-    z-index: 20000;
+    background-position: center;
 }
 .popup button {
     background: transparent;
