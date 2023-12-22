@@ -177,7 +177,6 @@ async function getSemester() {
             // 點擊 alert 的確認按鈕
             await alert.accept();
         } catch (e) { }
-        await driver.wait(until.)
         await driver.switchTo().frame(driver.findElement(By.name("mainFrame")));
         name = await driver.findElement(By.id("Q_AYEAR")).getText() + "_" + await driver.findElement(By.id("Q_SMS")).getText();
     }
