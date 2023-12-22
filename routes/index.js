@@ -1,9 +1,12 @@
+require('dotenv').config();
+var path = require('path');
+const fs = require("fs");//讀取檔案用
 var express = require('express');
 var router = express.Router();
 
 var mongoose = require('mongoose');
 // 連接到MongoDB 資料庫
-mongoose.connect('mongodb+srv://01057122:webproject@webproject.hqd0nda.mongodb.net/ntouCourse');
+mongoose.connect(process.env.Mongo_URI);
 const db = mongoose.connection;
 // 與資料庫連線發生錯誤時
 db.on('error', console.error.bind(console, 'Connection fails!'));
@@ -17,6 +20,29 @@ const chrome = require('selenium-webdriver/chrome');
 const chromeOptions = new chrome.Options();
 chromeOptions.headless(); // 不開啟瀏覽器
 chromeOptions.addArguments('--blink-settings=imagesEnabled=false'); // 禁用圖片加載
+
+
+try {
+    chrome.getDefaultService()//確認是否有預設
+} catch {
+    console.warn('找不到預設driver!');
+    
+    //'../chromedriver.exe'記得調整成自己的路徑
+    const file_path = './chromedriver'
+    //請確認印出來日誌中的位置是否與你路徑相同
+    console.log(path.join(__dirname, file_path));
+    
+    //確認路徑下chromedriver.exe是否存在            
+    if (fs.existsSync(path.join(__dirname, file_path))) {
+        //設定driver路徑
+        const service = new chrome.ServiceBuilder(path.join(__dirname, file_path)).build();
+        chrome.setDefaultService(service);
+        console.log('設定driver路徑');
+    } else {
+        console.error('無法設定driver路徑');
+        return false
+    }
+}
 
 // 課程collection的格式設定
 const mySchema=new mongoose.Schema({
@@ -168,7 +194,7 @@ async function getSemester() {
         // 不確定會不會換網址
         await driver.get('https://ais.ntou.edu.tw/outside.aspx?mainPage=LwBBAHAAcABsAGkAYwBhAHQAaQBvAG4ALwBUAEsARQAvAFQASwBFADIAMgAvAFQASwBFADIAMgAxADUAXwAuAGEAcwBwAHgAPwBwAHIAbwBnAGMAZAA9AFQASwBFADIAMgAxADUA');
         try {
-            await driver.wait(until.alertIsPresent(), 2000);
+            await driver.wait(until.alertIsPresent(), 10000);
 
             // 如果有 alert，切換到 alert
             const alert = await driver.switchTo().alert();
@@ -190,7 +216,7 @@ async function getCourse(dept) {
         // 不確定會不會換網址
         await driver.get('https://ais.ntou.edu.tw/outside.aspx?mainPage=LwBBAHAAcABsAGkAYwBhAHQAaQBvAG4ALwBUAEsARQAvAFQASwBFADIAMgAvAFQASwBFADIAMgAxADUAXwAuAGEAcwBwAHgAPwBwAHIAbwBnAGMAZAA9AFQASwBFADIAMgAxADUA');
         try {
-            await driver.wait(until.alertIsPresent(), 2000);
+            await driver.wait(until.alertIsPresent(), 10000);
 
             // 如果有 alert，切換到 alert
             const alert = await driver.switchTo().alert();
