@@ -169,7 +169,7 @@ async function getSemester() {
         // 不確定會不會換網址
         await driver.get('https://ais.ntou.edu.tw/outside.aspx?mainPage=LwBBAHAAcABsAGkAYwBhAHQAaQBvAG4ALwBUAEsARQAvAFQASwBFADIAMgAvAFQASwBFADIAMgAxADUAXwAuAGEAcwBwAHgAPwBwAHIAbwBnAGMAZAA9AFQASwBFADIAMgAxADUA');
         try {
-            await driver.wait(until.alertIsPresent(), 2000);
+            await driver.wait(until.alertIsPresent(), 10000);
 
             // 如果有 alert，切換到 alert
             const alert = await driver.switchTo().alert();
@@ -177,6 +177,7 @@ async function getSemester() {
             // 點擊 alert 的確認按鈕
             await alert.accept();
         } catch (e) { }
+        await driver.wait(until.)
         await driver.switchTo().frame(driver.findElement(By.name("mainFrame")));
         name = await driver.findElement(By.id("Q_AYEAR")).getText() + "_" + await driver.findElement(By.id("Q_SMS")).getText();
     }
@@ -191,7 +192,7 @@ async function getCourse(dept) {
         // 不確定會不會換網址
         await driver.get('https://ais.ntou.edu.tw/outside.aspx?mainPage=LwBBAHAAcABsAGkAYwBhAHQAaQBvAG4ALwBUAEsARQAvAFQASwBFADIAMgAvAFQASwBFADIAMgAxADUAXwAuAGEAcwBwAHgAPwBwAHIAbwBnAGMAZAA9AFQASwBFADIAMgAxADUA');
         try {
-            await driver.wait(until.alertIsPresent(), 2000);
+            await driver.wait(until.alertIsPresent(), 10000);
 
             // 如果有 alert，切換到 alert
             const alert = await driver.switchTo().alert();
