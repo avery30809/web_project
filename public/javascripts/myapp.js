@@ -79,16 +79,10 @@ function getCourses() {
             element.addEventListener("change", ()=>{
                 let target1 = coursesList.find(item => `${item.id} ${item.class}` === element.value);
                 target1.checked = !target1.checked;
-                updateTable();
+                updateTable(target1);
             }, false);
         });
     });
-}
-function postTest() {
-    document.getElementById("display").innerHTML = 'checking...';
-    $.post("/", { name: "Curry"}, function(res) {
-        document.getElementById("display").innerHTML= res.status;
-    }); //假裝有要發布的資料
 }
 
 function createTable(rows = 14, cols = 8) {
@@ -121,31 +115,26 @@ function createTable(rows = 14, cols = 8) {
     }
 }
 
-function updateTable(){
-    const allCheckBox = document.querySelectorAll("input[type='checkbox']");
-    createTable();
-    // 遍歷所有的 checkbox 元素
-    allCheckBox.forEach(function(nowCheckBox) {
-        // 檢查 checkbox 的狀態
-        if (nowCheckBox.checked) {
-            let params = nowCheckBox.value.split(" ");
-            $.get(`courses/${params[0]}/${params[1]}`, function(result){
-                let course = result[0];
-                let time = course.seg;
-                console.log(time);
-                for(let i = 0 ; i < time.length ; i++){
-                    let nowChooseTime = document.getElementById(time[i]);
-                    let courseString = course.id +"<br>"+course.course_name+"<br>"+course.teacher+"<br>";
-                    let element = document.createElement("p");
-                    element.className = `course ${course.class}`;
-                    element.innerHTML = courseString;
-                    element.addEventListener("click", popupDetail, false);
-                    nowChooseTime.appendChild(element);
-                }
-                return false;
-            });
+function updateTable(target1){
+    let time = target1.seg;
+    if (target1.checked) {
+        for(let i = 0 ; i < time.length ; i++){
+            let nowChooseTime = document.getElementById(time[i]);
+            let courseString = target1.id +"<br>"+target1.course_name+"<br>"+target1.teacher+"<br>";
+            let element = document.createElement("p");
+            element.className = `course ${target1.class} ${target1.id}`;
+            element.innerHTML = courseString;
+            element.addEventListener("click", popupDetail, false);
+            nowChooseTime.appendChild(element);
         }
-    });
+    }
+    else {
+        for(let i = 0 ; i < time.length ; i++){
+            let nowChooseTime = document.getElementById(time[i]);
+            let target2 = Array.from(nowChooseTime.childNodes).find(element=>Array.from(element.classList).includes(target1.class)&&Array.from(element.classList).includes(target1.id));
+            nowChooseTime.removeChild(target2);
+        }
+    }
 }
 
 function updateList() {
@@ -173,7 +162,7 @@ function updateList() {
             element.addEventListener("change", ()=>{
                 let target1 = coursesList.find(item => `${item.id} ${item.class}` === element.value);
                 target1.checked = !target1.checked;
-                updateTable();
+                updateTable(target1);
             }, false);
         });
         return;
@@ -202,7 +191,7 @@ function updateList() {
                 element.addEventListener("change", ()=>{
                     let target1 = coursesList.find(item => `${item.id} ${item.class}` === element.value);
                     target1.checked = !target1.checked;
-                    updateTable();
+                    updateTable(target1);
                 }, false);
             });
             break;
@@ -227,7 +216,7 @@ function updateList() {
                 element.addEventListener("change", ()=>{
                     let target1 = coursesList.find(item => `${item.id} ${item.class}` === element.value);
                     target1.checked = !target1.checked;
-                    updateTable();
+                    updateTable(target1);
                 }, false);
             });
             break;
@@ -252,7 +241,7 @@ function updateList() {
                 element.addEventListener("change", ()=>{
                     let target1 = coursesList.find(item => `${item.id} ${item.class}` === element.value);
                     target1.checked = !target1.checked;
-                    updateTable();
+                    updateTable(target1);
                 }, false);
             });
             break;
@@ -279,7 +268,7 @@ function updateList() {
                 element.addEventListener("change", ()=>{
                     let target1 = coursesList.find(item => `${item.id} ${item.class}` === element.value);
                     target1.checked = !target1.checked;
-                    updateTable();
+                    updateTable(target1);
                 }, false);
             });
             break;
@@ -311,7 +300,7 @@ function updateList() {
                 element.addEventListener("change", ()=>{
                     let target1 = coursesList.find(item => `${item.id} ${item.class}` === element.value);
                     target1.checked = !target1.checked;
-                    updateTable();
+                    updateTable(target1);
                 }, false);
             });
             break;
