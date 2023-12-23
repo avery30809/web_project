@@ -149,7 +149,9 @@ router.post('/', async function (req, res) {
 });
 
 async function getSemester() {
-    const browser = await puppeteer.launch();
+    const browser = await puppeteer.launch({
+        args: ['--no-sandbox', '--disable-setuid-sandbox']
+    })
     let year;
     try {
         // 創建一個新的頁面
@@ -173,7 +175,9 @@ async function getSemester() {
 }
 async function getCourse(dept) {
     // 啟動瀏覽器
-    const browser = await puppeteer.launch();
+    const browser = await puppeteer.launch({
+        args: ['--no-sandbox', '--disable-setuid-sandbox']
+    })
 
     // 創建一個新的頁面
     const page = await browser.newPage();
