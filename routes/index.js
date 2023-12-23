@@ -1,8 +1,8 @@
 require('dotenv').config();
-var path = require('path');
-const fs = require("fs");//讀取檔案用
+const cheerio = require('cheerio');
 var express = require('express');
 var router = express.Router();
+const puppeteer = require('puppeteer');
 
 var mongoose = require('mongoose');
 // 連接到MongoDB 資料庫
@@ -14,35 +14,6 @@ db.on('error', console.error.bind(console, 'Connection fails!'));
 db.once('open', async function () {
     console.log('Connected to database...');
 });
-
-const { Builder, Browser, By, until } = require('selenium-webdriver');
-const chrome = require('selenium-webdriver/chrome');
-const chromeOptions = new chrome.Options();
-chromeOptions.headless(); // 不開啟瀏覽器
-chromeOptions.addArguments('--blink-settings=imagesEnabled=false'); // 禁用圖片加載
-
-
-try {
-    chrome.getDefaultService()//確認是否有預設
-} catch {
-    console.warn('找不到預設driver!');
-    
-    //'../chromedriver.exe'記得調整成自己的路徑
-    const file_path = './chromedriver'
-    //請確認印出來日誌中的位置是否與你路徑相同
-    console.log(path.join(__dirname, file_path));
-    
-    //確認路徑下chromedriver.exe是否存在            
-    if (fs.existsSync(path.join(__dirname, file_path))) {
-        //設定driver路徑
-        const service = new chrome.ServiceBuilder(path.join(__dirname, file_path)).build();
-        chrome.setDefaultService(service);
-        console.log('設定driver路徑');
-    } else {
-        console.error('無法設定driver路徑');
-        return false
-    }
-}
 
 // 課程collection的格式設定
 const mySchema=new mongoose.Schema({
@@ -162,135 +133,133 @@ router.post('/', async function (req, res) {
         const collections = await db.db.listCollections({ name: tempName }).toArray();
         if (collections.length > 0) {
             res.send({
-                status: `Collection ${collectionName} exists.`
+                message: `Collection ${collectionName} exists.`
             });
         } else {
             collectionName = tempName;
             Todo = mongoose.model(collectionName, mySchema);
-            res.send({
-                status: `update courses`
-            });
             await usage(collectionName);
+            res.send({
+                message: `update courses`
+            });
         }
     } catch (error) {
         console.error(error);
     }
 });
-router.put('/hello', function (req, res) {
-    res.send({
-        message: 'Hello New World!'
-    });
-});
-router.delete('/hello', function (req, res) {
-    res.send({
-        status: 'Done!'
-    });
-});
 
 async function getSemester() {
-    let driver = await new Builder().forBrowser(Browser.CHROME).setChromeOptions(chromeOptions).build();
-    let name;
+    const browser = await puppeteer.launch();
+    let year;
     try {
-        // 不確定會不會換網址
-        await driver.get('https://ais.ntou.edu.tw/outside.aspx?mainPage=LwBBAHAAcABsAGkAYwBhAHQAaQBvAG4ALwBUAEsARQAvAFQASwBFADIAMgAvAFQASwBFADIAMgAxADUAXwAuAGEAcwBwAHgAPwBwAHIAbwBnAGMAZAA9AFQASwBFADIAMgAxADUA');
-        try {
-            await driver.wait(until.alertIsPresent(), 10000);
+        // 創建一個新的頁面
+        const page = await browser.newPage();
 
-            // 如果有 alert，切換到 alert
-            const alert = await driver.switchTo().alert();
+        // 轉到目標網頁 不確定會不會換網址
+        await page.goto('https://ais.ntou.edu.tw/outside.aspx?mainPage=LwBBAHAAcABsAGkAYwBhAHQAaQBvAG4ALwBUAEsARQAvAFQASwBFADIAMgAvAFQASwBFADIAMgAxADUAXwAuAGEAcwBwAHgAPwBwAHIAbwBnAGMAZAA9AFQASwBFADIAMgAxADUA');
+        // 獲取所有的 frames
+        const frames = page.frames();
+        const targetFrame = frames.find(frame => frame.name() === "mainFrame");
 
-            // 點擊 alert 的確認按鈕
-            await alert.accept();
-        } catch (e) { }
-        await driver.switchTo().frame(driver.findElement(By.name("mainFrame")));
-        name = await driver.findElement(By.id("Q_AYEAR")).getText() + "_" + await driver.findElement(By.id("Q_SMS")).getText();
+        await targetFrame.waitForSelector('#Q_AYEAR');
+        // 使用 page.$eval 獲取元素的文字內容
+        year = await targetFrame.$eval('#Q_AYEAR', element => element.textContent) + "_" + await targetFrame.$eval('#Q_SMS', element => element.textContent);
     }
     finally {
-        await driver.quit();
-        return name;
+        // 關閉瀏覽器
+        await browser.close();
+        return year;
     }
 }
 async function getCourse(dept) {
-    let driver = await new Builder().forBrowser(Browser.CHROME).setChromeOptions(chromeOptions).build();
-    try {
-        // 不確定會不會換網址
-        await driver.get('https://ais.ntou.edu.tw/outside.aspx?mainPage=LwBBAHAAcABsAGkAYwBhAHQAaQBvAG4ALwBUAEsARQAvAFQASwBFADIAMgAvAFQASwBFADIAMgAxADUAXwAuAGEAcwBwAHgAPwBwAHIAbwBnAGMAZAA9AFQASwBFADIAMgAxADUA');
-        try {
-            await driver.wait(until.alertIsPresent(), 10000);
+    // 啟動瀏覽器
+    const browser = await puppeteer.launch();
 
-            // 如果有 alert，切換到 alert
-            const alert = await driver.switchTo().alert();
+    // 創建一個新的頁面
+    const page = await browser.newPage();
 
-            // 點擊 alert 的確認按鈕
-            await alert.accept();
-        } catch (e) { }
-        await driver.switchTo().frame(driver.findElement(By.name("mainFrame")));
-        // 找到<select>元素
-        const selectElement = await driver.findElement(By.id('Q_FACULTY_CODE'));
+    // 轉到目標網頁
+    await page.goto('https://ais.ntou.edu.tw/outside.aspx?mainPage=LwBBAHAAcABsAGkAYwBhAHQAaQBvAG4ALwBUAEsARQAvAFQASwBFADIAMgAvAFQASwBFADIAMgAxADUAXwAuAGEAcwBwAHgAPwBwAHIAbwBnAGMAZAA9AFQASwBFADIAMgAxADUA');
 
-        // 創建一個select對象
-        await driver.wait(until.elementIsEnabled(selectElement), 10000);
-        const selectInstance = await driver.findElement(By.id('Q_FACULTY_CODE'));
+    // 獲取所有的 frames
+    const frames = page.frames();
+    const targetFrame = frames.find(frame => frame.name() === "mainFrame");
+    await targetFrame.$eval('#PC_PageSize', element => element.value = "1000");
 
-        // 通過可見文本選擇option對象
-        await selectInstance.findElement(By.xpath(`option[text()="${dept}"]`)).click();
-        await driver.findElement(By.id('QUERY_BTN1')).click();
-        await driver.wait(until.stalenessOf(driver.findElement(By.id("PC_PageSize"))), 10000);
-        await driver.findElement(By.id("PC_PageSize")).sendKeys("10");
-        await driver.findElement(By.id("PC_ShowRows")).click();
-        await driver.wait(until.stalenessOf(driver.findElement(By.id("DataGrid"))), 10000);
-        let table = await driver.findElement(By.id("DataGrid"));
-        // 獲得table的所有行
-        let rows = await table.findElements(By.css('tr'));
+    await targetFrame.waitForSelector('#Q_AYEAR');
 
-        // 遍歷每一行
-        for (let i = 1; i < rows.length; i++) {  // 跳過表頭
-            // 找到並點擊行中的a元素
-            const link = await rows[i].findElement(By.css('a'));
-            await driver.wait(until.elementIsVisible(link), 10000);
-            await link.click();
-            await driver.wait(until.elementLocated(By.className("fancybox-iframe")), 10000);
+    const year = await targetFrame.$eval('#Q_AYEAR', element => element.textContent) + "_" + await targetFrame.$eval('#Q_SMS', element => element.textContent);
+    
+    await targetFrame.$eval('#Q_FACULTY_CODE', (selectElement, optionText) => {
+        const option = Array.from(selectElement.options).find(opt => opt.text === optionText);
 
-            // 切換到新的iframe
-            await driver.switchTo().frame(driver.findElement(By.className("fancybox-iframe")));
-            await driver.wait(until.elementLocated(By.name("mainFrame")), 10000);
-            await driver.switchTo().frame(driver.findElement(By.name("mainFrame")));
-            await driver.wait(until.elementLocated(By.id("QTable2")), 10000);
-
-            const table2 = await driver.findElement(By.id("QTable2"));
-            let obj = {};
-            obj['id'] = await table2.findElement(By.id("M_COSID")).getText();
-            obj['dept_name'] = await table2.findElement(By.id("M_FACULTY_NAME")).getText();
-            obj['teacher'] = await table2.findElement(By.id("M_LECTR_TCH_CH")).getText();
-            obj['course_name'] = await table2.findElement(By.id("CH_LESSON")).getText();
-            obj['course_name_ENG'] = await table2.findElement(By.id("M_ENG_LESSON")).getText();
-            obj['class'] = await table2.findElement(By.id("M_GRADE")).getText();
-            obj['hours'] = await table2.findElement(By.id("M_LECTR_HOUR")).getText();
-            obj['must'] = await table2.findElement(By.id("M_MUST")).getText();
-            obj['seg'] = (await table2.findElement(By.id("M_SEG")).getText()).split(",");
-            obj['place'] = (await table2.findElement(By.id("M_CLSSRM_ID")).getText()).split(",");
-            obj['evaluation'] = await table2.findElement(By.id("M_CH_TYPE")).getText();
-            obj['evaluation_ENG'] = await table2.findElement(By.id("M_ENG_TYPE")).getText();
-
-            obj['hours'] = parseInt(obj['hours']);
-            obj['must'] = obj['must']=="T"?"服務學習":obj['must'];
-            let temp = obj['teacher'].split("(");
-            obj['teacher'] = temp[0];
-            obj['teacher_ENG'] = temp[1].replace(")", "");
-
-            await driver.switchTo().parentFrame();
-            await driver.switchTo().parentFrame();
-            await driver.findElement(By.className("fancybox-item fancybox-close")).click();
-            table = await driver.findElement(By.id("DataGrid"));
-
-            rows = await table.findElements(By.css('tr'));
-            const todo = new Todo(obj);
-            await todo.save();
+        if (option) {
+            option.selected = true;
         }
-    } finally {
-        await driver.quit();
-        console.log("done");
+    }, dept);
+
+    await targetFrame.$eval('#QUERY_BTN1', button => button.click());
+
+    await targetFrame.waitForSelector("#PC_PageSize", {visible: true});
+
+
+    await targetFrame.$eval('#PC_ShowRows', button => button.click());
+
+    await targetFrame.waitForSelector("#DataGrid", {visible: true});
+
+    // 獲取表格的 HTML 內容
+    const tableHtml = await targetFrame.$eval('#DataGrid', table => table.outerHTML);
+
+    // 使用 Cheerio 解析 HTML
+    const $ = cheerio.load(tableHtml);
+
+    const detailTarget = [];
+
+    $('#DataGrid a').each(async (index, element) => {
+        if(index>16) {
+            detailTarget.push(element);
+        }
+    });
+
+    for(let i=0;i<detailTarget.length;i++) {
+        await targetFrame.waitForSelector(`#${detailTarget[i].attribs['id']}`, {visible: true});
+        await targetFrame.$eval(`#${detailTarget[i].attribs['id']}`, button=>button.click());
+        await targetFrame.waitForSelector('.fancybox-iframe');
+        const frameHandle = await targetFrame.$('.fancybox-iframe');
+        const newFrame = await frameHandle.contentFrame();
+        await newFrame.waitForSelector('[name="mainFrame"]');
+
+        const popHandle = await newFrame.$('[name="mainFrame"]');
+        const popFrame = await popHandle.contentFrame();
+        await popFrame.waitForSelector('#M_COSID');
+        let obj = {};
+        obj.id = await popFrame.$eval('#M_COSID', item => item.textContent);
+        obj.dept_name = await popFrame.$eval('#M_FACULTY_NAME', item => item.textContent);
+        obj.teacher = await popFrame.$eval('#M_LECTR_TCH_CH', item => item.textContent);
+        obj.course_name = await popFrame.$eval('#CH_LESSON', item => item.textContent);
+        obj.course_name_ENG = await popFrame.$eval('#M_ENG_LESSON', item => item.textContent);
+        obj.class = await popFrame.$eval('#M_GRADE', item => item.textContent);
+        obj.hours = await popFrame.$eval('#M_LECTR_HOUR', item => item.textContent);
+        obj.must = await popFrame.$eval('#M_MUST', item => item.textContent);
+        obj.seg = await popFrame.$eval('#M_SEG', item => item.textContent.split(","));
+        obj.place = await popFrame.$eval('#M_CLSSRM_ID', item => item.textContent.split(","));
+        obj.evaluation = await popFrame.$eval('#M_CH_TYPE', item => item.textContent);
+        obj.evaluation_ENG = await popFrame.$eval('#M_ENG_TYPE', item => item.textContent);
+
+        obj.hours = parseInt(obj.hours);
+        obj.must = obj.must=="T"?"服務學習":obj.must;
+        let temp = obj.teacher.split("(");
+        obj.teacher = temp[0];
+        obj.teacher_ENG = temp[1].replace(")", "");
+        await targetFrame.waitForSelector('.fancybox-item.fancybox-close');
+        await targetFrame.$eval('.fancybox-item.fancybox-close', button=>button.click());
+        const todo = new Todo(obj);
+        await todo.save();
+        await targetFrame.waitForTimeout(300);
     }
+    // 關閉瀏覽器
+    await browser.close();
+    console.log("done");
 };
 async function usage() {
     await Promise.all([getCourse("0507-資訊工程學系"), getCourse("090M-共同教育中心博雅教育組")]);

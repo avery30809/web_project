@@ -132,6 +132,7 @@ function updateTable(){
             $.get(`courses/${params[0]}/${params[1]}`, function(result){
                 let course = result[0];
                 let time = course.seg;
+                console.log(time);
                 for(let i = 0 ; i < time.length ; i++){
                     let nowChooseTime = document.getElementById(time[i]);
                     let courseString = course.id +"<br>"+course.course_name+"<br>"+course.teacher+"<br>";
