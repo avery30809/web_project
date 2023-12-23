@@ -30,6 +30,10 @@ $(document).ready(()=>{
     document.getElementById("searchBox").addEventListener("input", updateList, false);
     const sortBtn = document.querySelector(".btn-default");
     sortBtn.addEventListener("click", ()=>{
+        if(mutexLock) {
+            window.alert("尚未更新完");
+            return;
+        }
         [coursesList, preList] = [preList, coursesList];
         sortBtn.classList.toggle("btn-default");
         sortBtn.classList.toggle("btn-success");
@@ -138,8 +142,8 @@ function updateTable(target1){
 }
 
 function updateList() {
-    let query = document.getElementById("searchBox").value, content = "";
-    document.getElementById("courseList").innerHTML = "loading";
+    let query = document.getElementById("searchBox").value, content = "loading...";
+    document.getElementById("courseList").innerHTML = "";
     let checkedList = [];
     if(query == "") {
         let i=0;
