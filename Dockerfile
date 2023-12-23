@@ -6,4 +6,4 @@ ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
 COPY package*.json ./
 RUN npm ci
 COPY . .
-CMD ['sh', '-c', 'npm start']
+CMD ["sh", "-c", "npm start"]
