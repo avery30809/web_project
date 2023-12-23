@@ -1,5 +1,8 @@
 let closeImg = new Image();
 closeImg.src = "../images/close.png";
+let coursesList = [];
+let preList = [];   // 用來交換排序順序
+let mutexLock = false;
 $(document).ready(()=>{
     [...document.querySelectorAll('[data-bs-toggle="popover"]')].forEach(el => new bootstrap.Popover(el))
     const close = document.getElementById("closeIcon");
@@ -7,12 +10,14 @@ $(document).ready(()=>{
     close.style.width = "50px";
     close.style.height = "50px";
     createTable();  //最後將回傳的表格放入body裡
+    mutexLock = true;
     $.ajax({
         url: "first",
         type: "GET",
         success: (res)=>{
             document.getElementById("courseList").innerHTML= res.message;
             getCourses();
+            mutexLock = false;
         }
     });
     document.getElementById("selectType").addEventListener("click", (event)=>{
@@ -46,9 +51,6 @@ $(document).ready(()=>{
     icon[0].addEventListener("click", printSchedule, false);
     icon[1].addEventListener("click", updateDB, false);
 });
-
-let coursesList = [];
-let preList = [];   // 用來交換排序順序
 
 document.addEventListener("click", clearScreen, false);
 
@@ -142,7 +144,7 @@ function updateTable(target1){
 }
 
 function updateList() {
-    let query = document.getElementById("searchBox").value, content = "loading...";
+    let query = document.getElementById("searchBox").value, content = "";
     document.getElementById("courseList").innerHTML = "";
     let checkedList = [];
     if(query == "") {
@@ -386,7 +388,7 @@ function printSchedule() {
     printWindow.print();
     printWindow.close();
 }
-let mutexLock = false;
+
 function updateDB(e) {
     e.target.style.transform = 'rotate(360deg)';
     setTimeout(()=>{
