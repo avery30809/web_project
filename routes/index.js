@@ -154,6 +154,7 @@ async function getSemester() {
         executablePath: process.env.NODE_ENV === "production"
         ? process.env.PUPPETEER_EXECUTABLE_PATH
         : puppeteer.executablePath(),
+        headless: "new"
     })
     let year;
     try {
@@ -183,6 +184,7 @@ async function getCourse(dept) {
         executablePath: process.env.NODE_ENV === "production"
         ? process.env.PUPPETEER_EXECUTABLE_PATH
         : puppeteer.executablePath(),
+        headless: "new"
     })
 
     // 創建一個新的頁面

@@ -139,7 +139,7 @@ function updateTable(target1){
 
 function updateList() {
     let query = document.getElementById("searchBox").value, content = "";
-    document.getElementById("courseList").innerHTML = "";
+    document.getElementById("courseList").innerHTML = "loading";
     let checkedList = [];
     if(query == "") {
         let i=0;
@@ -395,6 +395,8 @@ function updateDB(e) {
         return;
     }
     mutexLock = true;
+    coursesList = [];
+    preList = [];
     createTable();
     document.getElementById("courseList").innerHTML = "loading...";
 
