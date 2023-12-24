@@ -22,6 +22,10 @@ $(document).ready(()=>{
     });
     document.getElementById("selectType").addEventListener("click", (event)=>{
         event.stopPropagation();
+        if(mutexLock) {
+            window.alert("尚未更新完");
+            return;
+        }
         event.target.parentElement.classList.toggle("active");
     }, false);
     document.querySelector(".dropdown-menu").childNodes.forEach((element)=>{
@@ -48,8 +52,8 @@ $(document).ready(()=>{
     document.getElementById("popup").addEventListener("click", (e)=>{e.stopPropagation()}, false);
     document.getElementById("closeIcon").addEventListener("click", clearScreen, false);
     let icon = document.querySelectorAll(".pic");
-    icon[0].addEventListener("click", printSchedule, false);
-    icon[1].addEventListener("click", updateDB, false);
+    icon[1].addEventListener("click", printSchedule, false);
+    icon[2].addEventListener("click", updateDB, false);
 });
 
 document.addEventListener("click", clearScreen, false);
@@ -143,7 +147,12 @@ function updateTable(target1){
     }
 }
 
-function updateList() {
+function updateList(e) {
+    if(mutexLock) {
+        window.alert("尚未更新完");
+        e.target.value = "";
+        return;
+    }
     let query = document.getElementById("searchBox").value, content = "";
     document.getElementById("courseList").innerHTML = "";
     let checkedList = [];
