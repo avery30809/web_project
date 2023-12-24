@@ -14,9 +14,9 @@ $(document).ready(()=>{
     $.ajax({
         url: "first",
         type: "GET",
-        success: (res)=>{
+        success: async(res)=>{
             document.getElementById("courseList").innerHTML= res.message;
-            getCourses();
+            await getCourses();
             mutexLock = false;
         }
     });
