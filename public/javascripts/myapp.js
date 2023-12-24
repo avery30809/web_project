@@ -64,7 +64,7 @@ function clearScreen() {
     });
 }
 
-function getCourses() {
+async function getCourses() {
     $.get("courses", function(courses) {
         document.getElementById("courseList").innerHTML = "";
         let i=0, content = "";
@@ -418,9 +418,9 @@ function updateDB(e) {
     $.ajax({
         url: "",
         type: "POST",
-        success: (res)=>{
+        success: async (res)=>{
             document.getElementById("courseList").innerHTML= res.message;
-            getCourses();
+            await getCourses();
             mutexLock = false;
         }
     });
