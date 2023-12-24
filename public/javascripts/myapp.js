@@ -65,7 +65,7 @@ function clearScreen() {
 }
 
 async function getCourses() {
-    $.get("courses", function(courses) {
+    await $.get("courses", function(courses) {
         document.getElementById("courseList").innerHTML = "";
         let i=0, content = "";
         coursesList = courses;
@@ -410,6 +410,10 @@ function updateDB(e) {
         return;
     }
     mutexLock = true;
+    const sortBtn = document.querySelector(".col-md-5 button");
+    sortBtn.classList.add("btn-default");
+    sortBtn.classList.remove("btn-success");
+    sortBtn.innerText = "依時間";
     coursesList = [];
     preList = [];
     createTable();
