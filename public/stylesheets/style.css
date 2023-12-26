@@ -238,7 +238,7 @@ input[type="checkbox"]:checked+label {
     background-position: center;
     word-break: break-all;
 }
-@media (max-width: 576px) {
+@media (max-width: 658px) {
     .popup {
         overflow-y: scroll;
         width: 85%;
@@ -255,7 +255,6 @@ input[type="checkbox"]:checked+label {
 .content .row {
     font-size: 120%;
     color: navy;
-    border-bottom: 2px solid black;
 }
 .content .row .col:first-child {
     text-align: center;
