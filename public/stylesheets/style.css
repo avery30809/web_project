@@ -227,7 +227,7 @@ input[type="checkbox"]:checked+label {
     position: relative;
     display: block;
     width: 45%;
-    height: auto;
+    max-height: 90%;
     padding: 20px;
     text-align: center;
     border: 2px solid #000;
@@ -236,6 +236,13 @@ input[type="checkbox"]:checked+label {
     background-size: 100% 100%;
     background-repeat: no-repeat;
     background-position: center;
+    word-break: break-all;
+}
+@media (max-width: 576px) {
+    .popup {
+        overflow-y: scroll;
+        width: 85%;
+    }
 }
 .popup button {
     background: transparent;
@@ -245,15 +252,14 @@ input[type="checkbox"]:checked+label {
     top: 0px;
 }
 
-.content .row .col {
+.content .row {
     font-size: 120%;
     color: navy;
+    border-bottom: 2px solid black;
 }
 .content .row .col:first-child {
-    text-align: right;
-    margin-right: 50px;
+    text-align: center;
 }
 .content .row .col:last-child {
-    text-align: left;
-    margin-left: 50px;
+    text-align: right;
 }
